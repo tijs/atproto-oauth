@@ -1,0 +1,9 @@
+# Deno
+deno.lock
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
