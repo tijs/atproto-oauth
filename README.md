@@ -1,5 +1,7 @@
 # @tijs/atproto-oauth
 
+[![Test](https://github.com/tijs/atproto-oauth/actions/workflows/test.yml/badge.svg)](https://github.com/tijs/atproto-oauth/actions/workflows/test.yml)
+
 Framework-agnostic OAuth integration for AT Protocol (Bluesky) applications.
 Works with standard Web Request/Response APIs - no framework dependencies.
 
