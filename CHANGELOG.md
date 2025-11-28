@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2025-11-28
+
+### Fixed
+
+- Updated `@tijs/atproto-sessions` to 1.0.1 which fixes mobile token cookie
+  compatibility. Mobile tokens now work correctly when iOS apps set them as
+  cookies.
+
 ## [1.1.0] - 2025-11-28
 
 ### Added
