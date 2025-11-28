@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-11-28
+
+### Added
+
+- **Native mobile OAuth support via query parameters**: The `/login` endpoint
+  now accepts mobile-specific query parameters for native app integration:
+  - `mobile=true` - Enable mobile flow with custom URL scheme redirect
+  - `redirect_scheme` - Custom URL scheme (e.g., `myapp://auth-callback`)
+  - `code_challenge` - PKCE code_challenge (stored for future external PKCE
+    support)
+
+### Example
+
+```typescript
+// Mobile app generates login URL:
+const loginUrl = new URL("https://yourapp.com/login");
+loginUrl.searchParams.set("handle", "user.bsky.social");
+loginUrl.searchParams.set("mobile", "true");
+loginUrl.searchParams.set("redirect_scheme", "myapp://auth-callback");
+
+// Open in WebView, callback redirects to: myapp://auth-callback?session_token=...&did=...
+```
+
+This eliminates the need for appview workarounds that create fake "pending"
+sessions - the library now handles mobile flows natively.
+
 ## [1.0.0] - 2025-11-28
 
 ### Breaking Changes
