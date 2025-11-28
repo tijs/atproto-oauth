@@ -8,8 +8,8 @@ All notable changes to this project will be documented in this file.
 
 - **Native mobile OAuth support via query parameters**: The `/login` endpoint
   now accepts mobile-specific query parameters for native app integration:
-  - `mobile=true` - Enable mobile flow with custom URL scheme redirect
-  - `redirect_scheme` - Custom URL scheme (e.g., `myapp://auth-callback`)
+  - `mobile=true` - Enable mobile flow with server-configured mobileScheme
+    redirect
   - `code_challenge` - PKCE code_challenge (stored for future external PKCE
     support)
 
@@ -20,10 +20,15 @@ All notable changes to this project will be documented in this file.
 const loginUrl = new URL("https://yourapp.com/login");
 loginUrl.searchParams.set("handle", "user.bsky.social");
 loginUrl.searchParams.set("mobile", "true");
-loginUrl.searchParams.set("redirect_scheme", "myapp://auth-callback");
 
-// Open in WebView, callback redirects to: myapp://auth-callback?session_token=...&did=...
+// Open in WebView, callback redirects to configured mobileScheme with tokens
 ```
+
+### Security
+
+Mobile redirects always use the server-configured `mobileScheme` from
+`createATProtoOAuth()` config. Client-specified redirect schemes are NOT allowed
+to prevent OAuth redirect attacks.
 
 This eliminates the need for appview workarounds that create fake "pending"
 sessions - the library now handles mobile flows natively.

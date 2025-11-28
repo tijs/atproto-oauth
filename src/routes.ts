@@ -58,16 +58,17 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * Query parameters:
    * - handle: User's AT Protocol handle (required)
    * - redirect: Relative path to redirect after web OAuth (optional)
-   * - mobile: "true" to enable mobile flow with custom scheme redirect (optional)
-   * - redirect_scheme: Custom URL scheme for mobile (optional, defaults to config.mobileScheme)
+   * - mobile: "true" to enable mobile flow with configured mobileScheme redirect (optional)
    * - code_challenge: PKCE code_challenge from mobile client (optional, for future use)
+   *
+   * Security: Mobile redirects always use the server-configured mobileScheme.
+   * Client-specified redirect schemes are NOT allowed to prevent OAuth redirect attacks.
    */
   async function handleLogin(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const handle = url.searchParams.get("handle");
     const redirect = url.searchParams.get("redirect");
     const mobile = url.searchParams.get("mobile") === "true";
-    const redirectScheme = url.searchParams.get("redirect_scheme");
     const codeChallenge = url.searchParams.get("code_challenge");
 
     if (!handle || typeof handle !== "string") {
@@ -88,16 +89,6 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       if (mobile) {
         state.mobile = true;
         logger.info(`Starting mobile OAuth flow for handle: ${handle}`);
-
-        // Optional custom redirect scheme
-        if (redirectScheme) {
-          // Validate scheme format (basic check)
-          if (/^[a-z][a-z0-9+.-]*:\/\//.test(redirectScheme)) {
-            state.redirectScheme = redirectScheme;
-          } else {
-            logger.warn(`Invalid redirect scheme ignored: ${redirectScheme}`);
-          }
-        }
 
         // Store PKCE code_challenge for mobile (library generates its own, but
         // in the future we could support external challenges for native apps)
@@ -180,9 +171,8 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       if (state.mobile) {
         const sealedToken = await sessionManager.sealToken({ did });
 
-        // Use custom redirect scheme from state if provided, otherwise use config default
-        const redirectUrl = state.redirectScheme || mobileScheme;
-        const mobileCallbackUrl = new URL(redirectUrl);
+        // Always use server-configured mobileScheme for security
+        const mobileCallbackUrl = new URL(mobileScheme);
         mobileCallbackUrl.searchParams.set("session_token", sealedToken);
         mobileCallbackUrl.searchParams.set("did", did);
         mobileCallbackUrl.searchParams.set("handle", state.handle);
@@ -201,7 +191,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         }
 
         logger.info(
-          `Mobile OAuth callback complete for ${did}, redirecting to ${redirectUrl}`,
+          `Mobile OAuth callback complete for ${did}, redirecting to ${mobileScheme}`,
         );
 
         return new Response(null, {
