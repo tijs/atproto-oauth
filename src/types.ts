@@ -6,10 +6,12 @@
 import type { OAuthStorage } from "@tijs/atproto-storage";
 
 /**
- * Logger interface for custom logging implementations
+ * Logger interface for custom logging implementations.
+ * Compatible with oauth-client-deno's Logger interface.
  */
 export interface Logger {
-  log(...args: unknown[]): void;
+  debug(...args: unknown[]): void;
+  info(...args: unknown[]): void;
   warn(...args: unknown[]): void;
   error(...args: unknown[]): void;
 }
@@ -18,7 +20,8 @@ export interface Logger {
  * No-op logger for production use
  */
 export const noopLogger: Logger = {
-  log: () => {},
+  debug: () => {},
+  info: () => {},
   warn: () => {},
   error: () => {},
 };

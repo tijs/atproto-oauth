@@ -111,25 +111,12 @@ export function createATProtoOAuth(
   const mobileScheme = config.mobileScheme ?? DEFAULT_MOBILE_SCHEME;
   const logger: Logger = config.logger ?? noopLogger;
 
-  // Create OAuth client
+  // Create OAuth client (Logger interfaces now match)
   const oauthClient = new OAuthClient({
     clientId: `${baseUrl}/oauth-client-metadata.json`,
     redirectUri: `${baseUrl}/oauth/callback`,
     storage: config.storage,
-    logger: {
-      debug: (msg: string, ...args: unknown[]) => {
-        logger.log(`[DEBUG] ${msg}`, ...args);
-      },
-      info: (msg: string, ...args: unknown[]) => {
-        logger.log(`[INFO] ${msg}`, ...args);
-      },
-      warn: (msg: string, ...args: unknown[]) => {
-        logger.warn(msg, ...args);
-      },
-      error: (msg: string, ...args: unknown[]) => {
-        logger.error(msg, ...args);
-      },
-    },
+    logger,
   });
 
   // Create session manager for cookie handling

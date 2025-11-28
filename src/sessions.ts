@@ -49,14 +49,14 @@ export class OAuthSessions implements OAuthSessionsInterface {
    * Get OAuth session for a DID with automatic token refresh
    */
   async getOAuthSession(did: string): Promise<SessionInterface | null> {
-    this.logger.log(`Restoring OAuth session for DID: ${did}`);
+    this.logger.debug(`Restoring OAuth session for DID: ${did}`);
 
     try {
       // The OAuth client's restore() method handles automatic token refresh
       const session = await this.oauthClient.restore(did);
 
       if (session) {
-        this.logger.log(`OAuth session restored successfully for DID: ${did}`);
+        this.logger.info(`OAuth session restored successfully for DID: ${did}`);
 
         // Log token expiration information if available
         if (session.timeUntilExpiry !== undefined) {
@@ -67,7 +67,7 @@ export class OAuthSessions implements OAuthSessionsInterface {
           const now = Date.now();
           const expiresAt = now + session.timeUntilExpiry;
 
-          this.logger.log(`Token status for DID ${did}:`, {
+          this.logger.debug(`Token status for DID ${did}:`, {
             expiresAt: new Date(expiresAt).toISOString(),
             currentTime: new Date(now).toISOString(),
             timeUntilExpiryMinutes,
@@ -76,7 +76,7 @@ export class OAuthSessions implements OAuthSessionsInterface {
           });
         }
       } else {
-        this.logger.log(`OAuth session not found for DID: ${did}`);
+        this.logger.debug(`OAuth session not found for DID: ${did}`);
       }
 
       return session;
@@ -94,23 +94,23 @@ export class OAuthSessions implements OAuthSessionsInterface {
    * Save OAuth session to storage
    */
   async saveOAuthSession(session: SessionInterface): Promise<void> {
-    this.logger.log(`Saving OAuth session for DID: ${session.did}`);
+    this.logger.debug(`Saving OAuth session for DID: ${session.did}`);
 
     await this.storage.set(`session:${session.did}`, session.toJSON(), {
       ttl: this.sessionTtl,
     });
 
-    this.logger.log(`OAuth session saved for DID: ${session.did}`);
+    this.logger.info(`OAuth session saved for DID: ${session.did}`);
   }
 
   /**
    * Delete OAuth session from storage
    */
   async deleteOAuthSession(did: string): Promise<void> {
-    this.logger.log(`Deleting OAuth session for DID: ${did}`);
+    this.logger.debug(`Deleting OAuth session for DID: ${did}`);
 
     await this.storage.delete(`session:${did}`);
 
-    this.logger.log(`OAuth session deleted for DID: ${did}`);
+    this.logger.info(`OAuth session deleted for DID: ${did}`);
   }
 }

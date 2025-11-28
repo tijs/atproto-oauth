@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2025-11-28
+
+### Breaking Changes
+
+- **Logger interface**: Changed from 3 methods (`log`, `warn`, `error`) to 4
+  methods (`debug`, `info`, `warn`, `error`) for compatibility with
+  oauth-client-deno. This allows unified logging across all AT Protocol OAuth
+  libraries.
+
+### Migration Guide
+
+**Logger interface:**
+
+```typescript
+// Before
+const oauth = createATProtoOAuth({
+  // ...
+  logger: {
+    log: console.log,
+    warn: console.warn,
+    error: console.error,
+  },
+});
+
+// After
+const oauth = createATProtoOAuth({
+  // ...
+  logger: {
+    debug: console.debug,
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  },
+});
+
+// Or simply pass console (which has all 4 methods):
+const oauth = createATProtoOAuth({
+  // ...
+  logger: console,
+});
+```
+
+### Changed
+
+- Updated `@tijs/atproto-sessions` dependency to 1.0.0
+
 ## [0.1.1] - 2025-11-28
 
 ### Added
