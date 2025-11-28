@@ -185,6 +185,7 @@ export function createATProtoOAuth(
     handleLogout: handlers.handleLogout,
     getSessionFromRequest: handlers.getSessionFromRequest,
     getClientMetadata: () => clientMetadata,
+    getClearCookieHeader: () => sessionManager.getClearCookieHeader(),
     sessions: handlers.sessions,
   };
 }

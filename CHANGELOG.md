@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-11-28
+
+### Added
+
+- `getClearCookieHeader()` method on `ATProtoOAuthInstance` for custom logout
+  flows and error handling scenarios
+
 ## [0.1.0] - 2025-11-27
 
 ### Added

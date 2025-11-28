@@ -298,6 +298,13 @@ export interface ATProtoOAuthInstance {
    */
   getClientMetadata(): ClientMetadata;
 
+  /**
+   * Get a Set-Cookie header to clear the session cookie.
+   * Useful for custom logout flows or error handling scenarios.
+   * @returns Set-Cookie header string
+   */
+  getClearCookieHeader(): string;
+
   /** Direct access to sessions interface for advanced usage */
   sessions: OAuthSessionsInterface;
 }
