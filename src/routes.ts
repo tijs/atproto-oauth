@@ -26,7 +26,6 @@ export interface RouteHandlersConfig {
   oauthSessions: OAuthSessions;
   storage: OAuthStorage;
   sessionTtl: number;
-  mobileScheme: string;
   logger: Logger;
 }
 
@@ -48,7 +47,6 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
     oauthSessions,
     storage,
     sessionTtl,
-    mobileScheme,
     logger,
   } = config;
 
@@ -57,19 +55,12 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    *
    * Query parameters:
    * - handle: User's AT Protocol handle (required)
-   * - redirect: Relative path to redirect after web OAuth (optional)
-   * - mobile: "true" to enable mobile flow with configured mobileScheme redirect (optional)
-   * - code_challenge: PKCE code_challenge from mobile client (optional, for future use)
-   *
-   * Security: Mobile redirects always use the server-configured mobileScheme.
-   * Client-specified redirect schemes are NOT allowed to prevent OAuth redirect attacks.
+   * - redirect: Relative path to redirect after OAuth (optional)
    */
   async function handleLogin(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const handle = url.searchParams.get("handle");
     const redirect = url.searchParams.get("redirect");
-    const mobile = url.searchParams.get("mobile") === "true";
-    const codeChallenge = url.searchParams.get("code_challenge");
 
     if (!handle || typeof handle !== "string") {
       return new Response("Invalid handle", { status: 400 });
@@ -85,25 +76,13 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         timestamp: Date.now(),
       };
 
-      // Mobile flow configuration
-      if (mobile) {
-        state.mobile = true;
-        logger.info(`Starting mobile OAuth flow for handle: ${handle}`);
-
-        // Store PKCE code_challenge for mobile (library generates its own, but
-        // in the future we could support external challenges for native apps)
-        if (codeChallenge) {
-          state.codeChallenge = codeChallenge;
-        }
-      } else {
-        // Web flow - store redirect path (validate it's a relative path)
-        if (redirect) {
-          // Security: Only allow relative paths starting with /
-          if (redirect.startsWith("/") && !redirect.startsWith("//")) {
-            state.redirectPath = redirect;
-          } else {
-            logger.warn(`Invalid redirect path ignored: ${redirect}`);
-          }
+      // Store redirect path (validate it's a relative path)
+      if (redirect) {
+        // Security: Only allow relative paths starting with /
+        if (redirect.startsWith("/") && !redirect.startsWith("//")) {
+          state.redirectPath = redirect;
+        } else {
+          logger.warn(`Invalid redirect path ignored: ${redirect}`);
         }
       }
 
@@ -167,43 +146,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         lastAccessed: now,
       });
 
-      // Handle mobile callback
-      if (state.mobile) {
-        const sealedToken = await sessionManager.sealToken({ did });
-
-        // Always use server-configured mobileScheme for security
-        const mobileCallbackUrl = new URL(mobileScheme);
-        mobileCallbackUrl.searchParams.set("session_token", sealedToken);
-        mobileCallbackUrl.searchParams.set("did", did);
-        mobileCallbackUrl.searchParams.set("handle", state.handle);
-
-        if (oauthSession.accessToken) {
-          mobileCallbackUrl.searchParams.set(
-            "access_token",
-            oauthSession.accessToken,
-          );
-        }
-        if (oauthSession.refreshToken) {
-          mobileCallbackUrl.searchParams.set(
-            "refresh_token",
-            oauthSession.refreshToken,
-          );
-        }
-
-        logger.info(
-          `Mobile OAuth callback complete for ${did}, redirecting to ${mobileScheme}`,
-        );
-
-        return new Response(null, {
-          status: 302,
-          headers: {
-            Location: mobileCallbackUrl.toString(),
-            "Set-Cookie": setCookieHeader,
-          },
-        });
-      }
-
-      // Web callback - redirect to stored path or home
+      // Redirect to stored path or home
       const redirectPath = state.redirectPath || "/";
 
       return new Response(null, {
@@ -254,55 +197,12 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
   }
 
   /**
-   * Get OAuth session from request (cookie or Bearer token)
+   * Get OAuth session from request (cookie-based)
    */
   async function getSessionFromRequest(
     request: Request,
   ): Promise<OAuthSessionFromRequestResult> {
-    // Check for Bearer token first (mobile)
-    const authHeader = request.headers.get("Authorization");
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const tokenResult = await sessionManager.validateBearerToken(authHeader);
-      if (tokenResult.data?.did) {
-        try {
-          const oauthSession = await oauthSessions.getOAuthSession(
-            tokenResult.data.did,
-          );
-          if (oauthSession) {
-            return { session: oauthSession };
-          }
-          return {
-            session: null,
-            error: {
-              type: "SESSION_EXPIRED",
-              message: "OAuth session not found in storage",
-            },
-          };
-        } catch (error) {
-          return {
-            session: null,
-            error: {
-              type: "OAUTH_ERROR",
-              message: error instanceof Error
-                ? error.message
-                : "OAuth session restore failed",
-              details: error,
-            },
-          };
-        }
-      }
-      return {
-        session: null,
-        error: tokenResult.error
-          ? {
-            type: "INVALID_COOKIE",
-            message: tokenResult.error.message,
-          }
-          : { type: "INVALID_COOKIE", message: "Invalid token" },
-      };
-    }
-
-    // Check for session cookie (web)
+    // Check for session cookie
     const sessionResult = await sessionManager.getSessionFromRequest(request);
     if (!sessionResult.data?.did) {
       return {

@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2025-11-29
+
+### Breaking Changes
+
+- **Removed mobile OAuth support**: The following features have been removed as
+  they were unused (the Anchor iOS app uses cookie-based auth via a WebView):
+  - `mobileScheme` config option - No longer needed
+  - `mobile` query parameter on `/login` - Removed
+  - `code_challenge` query parameter on `/login` - Removed
+  - Mobile callback with `session_token` - Removed
+  - Bearer token authentication in `getSessionFromRequest()` - Removed (now
+    cookie-only)
+- **Removed types**: `MobileOAuthStartRequest`, `MobileOAuthStartResponse`
+- **Simplified `OAuthState`**: Removed `mobile` and `codeChallenge` fields
+
+The library now focuses solely on cookie-based session management for web
+applications. Mobile apps should use app-specific WebView flows with cookie
+authentication.
+
+### Changed
+
+- Updated `@tijs/atproto-sessions` dependency to 2.0.0
+
 ## [1.1.1] - 2025-11-28
 
 ### Fixed

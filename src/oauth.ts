@@ -19,9 +19,6 @@ import { createRouteHandlers } from "./routes.ts";
 /** Default session TTL: 7 days in seconds */
 const DEFAULT_SESSION_TTL = 60 * 60 * 24 * 7;
 
-/** Default mobile callback scheme */
-const DEFAULT_MOBILE_SCHEME = "app://auth-callback";
-
 /**
  * Create a complete ATProto OAuth integration for any framework.
  *
@@ -108,7 +105,6 @@ export function createATProtoOAuth(
   // Normalize baseUrl
   const baseUrl = config.baseUrl.replace(/\/$/, "");
   const sessionTtl = config.sessionTtl ?? DEFAULT_SESSION_TTL;
-  const mobileScheme = config.mobileScheme ?? DEFAULT_MOBILE_SCHEME;
   const logger: Logger = config.logger ?? noopLogger;
 
   // Create OAuth client (Logger interfaces now match)
@@ -143,7 +139,6 @@ export function createATProtoOAuth(
     oauthSessions,
     storage: config.storage,
     sessionTtl,
-    mobileScheme,
     logger,
   });
 

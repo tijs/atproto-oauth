@@ -43,8 +43,6 @@ export type {
   ATProtoOAuthInstance,
   ClientMetadata,
   Logger,
-  MobileOAuthStartRequest,
-  MobileOAuthStartResponse,
   OAuthClientInterface,
   OAuthSessionFromRequestResult,
   OAuthSessionsInterface,
