@@ -391,6 +391,13 @@ This provides a clean login experience within the secure WebView.
 - [Python OAuth Web App](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app) -
   BFF pattern implementation in Python
 
+### iOS Swift Package
+
+- [ATProtoFoundation](https://github.com/tijs/ATProtoFoundation) - Swift package
+  providing the iOS client-side implementation for this library's BFF pattern,
+  including `IronSessionMobileOAuthCoordinator` for handling the OAuth flow and
+  `KeychainCredentialsStorage` for secure credential storage.
+
 ### Alternative Approaches
 
 This library uses the BFF pattern where OAuth tokens stay on your server. If you
