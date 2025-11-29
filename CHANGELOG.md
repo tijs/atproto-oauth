@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2025-11-29
+
+### Added
+
+- **README improvements**: Added "Why Use This Library?" section explaining the
+  BFF pattern, use cases, tradeoffs, and when to consider alternatives
+
 ## [2.2.1] - 2025-11-29
 
 ### Added

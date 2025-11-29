@@ -6,6 +6,36 @@
 Framework-agnostic OAuth integration for AT Protocol (Bluesky) applications.
 Works with standard Web Request/Response APIs - no framework dependencies.
 
+## Why Use This Library?
+
+This library implements the
+[Backend-for-Frontend (BFF) pattern](https://atproto.com/specs/oauth#confidential-client-backend-for-frontend)
+for AT Protocol OAuth. Your server handles OAuth and keeps tokens secure, while
+clients receive encrypted session cookies.
+
+**Use this library when you want:**
+
+- **Server-side token management** - OAuth tokens never leave your server,
+  reducing attack surface
+- **Cookie-based sessions** - Works naturally with web apps and mobile WebViews
+- **Framework flexibility** - Uses standard Request/Response APIs, works with
+  Hono, Fresh, Express, or any framework
+- **Simplified mobile auth** - Mobile apps complete OAuth in a secure WebView,
+  no token handling required
+- **Serverless-friendly** - Designed for edge runtimes like Val Town and Deno
+  Deploy
+
+**Consider alternatives when:**
+
+- You need tokens on the client device - use
+  [@atproto/oauth-client-browser](https://www.npmjs.com/package/@atproto/oauth-client-browser)
+  or
+  [@atproto/oauth-client-expo](https://www.npmjs.com/package/@atproto/oauth-client-expo)
+- You're building a CLI tool - use
+  [@atproto/oauth-client-node](https://www.npmjs.com/package/@atproto/oauth-client-node)
+- You need the official Bluesky SDK - see the
+  [AT Protocol SDK](https://atproto.blue/)
+
 ## Documentation
 
 - **[Web Authentication Guide](./docs/web-authentication.md)** - Cookie-based
