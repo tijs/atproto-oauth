@@ -6,6 +6,13 @@
 Framework-agnostic OAuth integration for AT Protocol (Bluesky) applications.
 Works with standard Web Request/Response APIs - no framework dependencies.
 
+## Documentation
+
+- **[Web Authentication Guide](./docs/web-authentication.md)** - Cookie-based
+  auth for web applications
+- **[Mobile Authentication Guide](./docs/mobile-authentication.md)** - Secure
+  WebView auth for iOS/Android apps
+
 ## Installation
 
 ```typescript

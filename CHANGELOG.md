@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2025-11-29
+
+### Added
+
+- **Documentation**: Added comprehensive guides for web and mobile
+  authentication:
+  - [Web Authentication Guide](./docs/web-authentication.md) - Cookie-based auth
+    for web apps
+  - [Mobile Authentication Guide](./docs/mobile-authentication.md) - Secure
+    WebView auth for iOS/Android
+
 ## [2.1.0] - 2025-11-29
 
 ### Added
