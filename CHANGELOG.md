@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2025-11-29
+
+### Added
+
+- **Documentation resources**: Added links to AT Protocol OAuth documentation
+  and official example implementations in both guides
+
 ## [2.2.0] - 2025-11-29
 
 ### Added

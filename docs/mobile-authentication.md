@@ -5,6 +5,12 @@ This guide covers implementing AT Protocol OAuth for native mobile applications
 
 ## Overview
 
+This library implements the
+[Backend-for-Frontend (BFF) pattern](https://atproto.com/specs/oauth#confidential-client-backend-for-frontend)
+recommended by AT Protocol for mobile apps requiring long-lived sessions. Your
+server acts as the OAuth client, keeping tokens secure while the mobile app
+receives a session cookie.
+
 Mobile authentication uses a secure WebView flow:
 
 1. App opens a secure browser (ASWebAuthenticationSession on iOS, Custom Tabs on
@@ -364,3 +370,37 @@ This provides a clean login experience within the secure WebView.
 - The OAuth state expired (default: 10 minutes)
 - User took too long to complete authorization
 - Start a new login flow
+
+## Resources
+
+### AT Protocol Documentation
+
+- [OAuth Specification](https://atproto.com/specs/oauth) - Full OAuth spec
+  including mobile client requirements
+- [OAuth Introduction](https://atproto.com/guides/oauth) - Overview of OAuth
+  patterns and app types
+- [BFF Pattern](https://atproto.com/specs/oauth#confidential-client-backend-for-frontend) -
+  Backend-for-Frontend architecture details
+
+### Example Implementations
+
+- [React Native OAuth Example](https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth) -
+  Official Bluesky mobile example using `@atproto/oauth-client-expo`
+- [Go OAuth Web App](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app) -
+  BFF pattern implementation in Go
+- [Python OAuth Web App](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app) -
+  BFF pattern implementation in Python
+
+### Alternative Approaches
+
+This library uses the BFF pattern where OAuth tokens stay on your server. If you
+prefer tokens on the device, consider:
+
+- [@atproto/oauth-client-expo](https://www.npmjs.com/package/@atproto/oauth-client-expo) -
+  Official Bluesky SDK for React Native (tokens on device)
+
+The BFF pattern is recommended when you need:
+
+- Long-lived sessions (up to 14 days for public clients)
+- Server-side API calls on behalf of users
+- Simplified mobile client code

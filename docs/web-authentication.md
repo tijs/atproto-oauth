@@ -240,3 +240,21 @@ async function logout() {
 
 See the [Hono example](../README.md#hono-integration) in the main README for a
 complete working setup.
+
+## Resources
+
+### AT Protocol Documentation
+
+- [OAuth Specification](https://atproto.com/specs/oauth) - Full OAuth spec for
+  AT Protocol
+- [OAuth Introduction](https://atproto.com/guides/oauth) - Overview of OAuth
+  patterns and app types
+- [Building Applications Guide](https://atproto.com/guides/applications) - Quick
+  start guide for AT Protocol apps
+
+### Example Implementations
+
+- [Go OAuth Web App](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app) -
+  Official Bluesky web app example in Go
+- [Python OAuth Web App](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app) -
+  Official Bluesky web app example in Python
