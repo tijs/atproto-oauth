@@ -27,6 +27,8 @@ export interface RouteHandlersConfig {
   storage: OAuthStorage;
   sessionTtl: number;
   logger: Logger;
+  /** URL scheme for mobile app OAuth callback (e.g. "myapp://auth-callback") */
+  mobileScheme?: string;
 }
 
 /**
@@ -48,6 +50,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
     storage,
     sessionTtl,
     logger,
+    mobileScheme,
   } = config;
 
   /**
@@ -56,11 +59,13 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * Query parameters:
    * - handle: User's AT Protocol handle (required)
    * - redirect: Relative path to redirect after OAuth (optional)
+   * - mobile: Set to "true" for mobile OAuth flow (redirects to mobileScheme)
    */
   async function handleLogin(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const handle = url.searchParams.get("handle");
     const redirect = url.searchParams.get("redirect");
+    const mobile = url.searchParams.get("mobile") === "true";
 
     if (!handle || typeof handle !== "string") {
       return new Response("Invalid handle", { status: 400 });
@@ -86,6 +91,11 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         }
       }
 
+      // Track mobile flow for callback redirect
+      if (mobile) {
+        state.mobile = true;
+      }
+
       const authUrl = await oauthClient.authorize(handle, {
         state: JSON.stringify(state),
       });
@@ -105,6 +115,13 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
 
   /**
    * Handle /oauth/callback route - complete OAuth flow
+   *
+   * For mobile OAuth (state.mobile=true):
+   * - Redirects to mobileScheme with session_token, did, and handle
+   * - Also sets cookie for fallback API auth
+   *
+   * For web OAuth:
+   * - Redirects to state.redirectPath or "/" with session cookie
    */
   async function handleCallback(request: Request): Promise<Response> {
     try {
@@ -146,7 +163,26 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         lastAccessed: now,
       });
 
-      // Redirect to stored path or home
+      // Mobile OAuth: redirect to app's URL scheme
+      if (state.mobile && mobileScheme) {
+        const sealedToken = await sessionManager.sealToken({ did });
+        const mobileCallbackUrl = new URL(mobileScheme);
+        mobileCallbackUrl.searchParams.set("session_token", sealedToken);
+        mobileCallbackUrl.searchParams.set("did", did);
+        mobileCallbackUrl.searchParams.set("handle", state.handle);
+
+        logger.info(`Mobile OAuth complete, redirecting to ${mobileScheme}`);
+
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: mobileCallbackUrl.toString(),
+            "Set-Cookie": setCookieHeader,
+          },
+        });
+      }
+
+      // Web OAuth: redirect to stored path or home
       const redirectPath = state.redirectPath || "/";
 
       return new Response(null, {

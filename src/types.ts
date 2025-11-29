@@ -137,6 +137,14 @@ export interface ATProtoOAuthConfig {
    * Pass console for standard logging.
    */
   logger?: Logger;
+
+  /**
+   * URL scheme for mobile app OAuth callback.
+   * When mobile=true is passed to /login, the callback will redirect to this
+   * scheme with session_token and did as query params.
+   * Example: "myapp://auth-callback" or "anchor-app://auth-callback"
+   */
+  mobileScheme?: string;
 }
 
 /**
@@ -300,6 +308,8 @@ export interface OAuthState {
   timestamp: number;
   /** Redirect path after successful web OAuth */
   redirectPath?: string;
+  /** Flag for mobile OAuth flow - redirects to mobileScheme instead of web */
+  mobile?: boolean;
 }
 
 // Re-export OAuthStorage from atproto-storage for convenience

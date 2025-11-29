@@ -140,6 +140,7 @@ export function createATProtoOAuth(
     storage: config.storage,
     sessionTtl,
     logger,
+    mobileScheme: config.mobileScheme,
   });
 
   // Generate client metadata

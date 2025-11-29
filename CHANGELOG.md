@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2025-11-29
+
+### Added
+
+- **Restored mobile OAuth redirect support**: Mobile apps using
+  ASWebAuthenticationSession (iOS) or Custom Tabs (Android) need the callback to
+  redirect to their URL scheme to complete the OAuth flow.
+
+  - `mobileScheme` config option - URL scheme for app callback (e.g.,
+    "myapp://auth-callback")
+  - `mobile=true` query parameter on `/login` - Enables mobile flow
+  - `mobile` field in `OAuthState` - Tracks mobile flow through OAuth
+  - Mobile callback with `session_token`, `did`, and `handle` query params
+
+### Example
+
+```typescript
+const oauth = createATProtoOAuth({
+  // ... other config
+  mobileScheme: "anchor-app://auth-callback",
+});
+
+// Mobile app opens: /login?handle=user.bsky.social&mobile=true
+// After OAuth, redirects to: anchor-app://auth-callback?session_token=...&did=...&handle=...
+```
+
+### Security
+
+- Mobile redirects always use the server-configured `mobileScheme`
+- Client-specified redirect schemes are NOT allowed to prevent OAuth redirect
+  attacks
+- Session cookie is also set as fallback for cookie-based API auth
+
+Note: This does NOT restore Bearer token authentication - mobile apps use
+cookie-based auth for API calls after the initial OAuth redirect.
+
+### Changed
+
+- Updated `@tijs/atproto-sessions` dependency to 2.1.0
+
 ## [2.0.0] - 2025-11-29
 
 ### Breaking Changes
