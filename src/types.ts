@@ -80,7 +80,10 @@ export interface OAuthClientInterface {
    * Start OAuth authorization flow
    * @returns URL object for authorization redirect
    */
-  authorize(handle: string, options?: { state?: string }): Promise<URL>;
+  authorize(
+    handle: string,
+    options?: { state?: string; scope?: string },
+  ): Promise<URL>;
 
   /**
    * Handle OAuth callback and exchange code for tokens

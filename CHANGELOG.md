@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2025-12-14
+
+### Added
+
+- **Custom OAuth scopes**: The `scope` config option is now properly passed to
+  the authorization request. Previously, the scope was only used in client
+  metadata but not in the actual PAR (Pushed Authorization Request), causing
+  OAuth to fail when using granular scopes instead of `transition:generic`.
+
 ## [2.3.0] - 2025-11-29
 
 ### Added

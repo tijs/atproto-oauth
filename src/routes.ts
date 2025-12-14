@@ -29,6 +29,8 @@ export interface RouteHandlersConfig {
   logger: Logger;
   /** URL scheme for mobile app OAuth callback (e.g. "myapp://auth-callback") */
   mobileScheme?: string;
+  /** OAuth scope to request (defaults to "atproto transition:generic") */
+  scope?: string;
 }
 
 /**
@@ -51,6 +53,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
     sessionTtl,
     logger,
     mobileScheme,
+    scope,
   } = config;
 
   /**
@@ -98,6 +101,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
 
       const authUrl = await oauthClient.authorize(handle, {
         state: JSON.stringify(state),
+        scope,
       });
 
       return new Response(null, {
