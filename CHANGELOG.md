@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2025-01-09
+
+### Added
+
+- **PWA OAuth support**: Added `pwa=true` query parameter for Progressive Web
+  App OAuth flows. When enabled, the OAuth callback returns an HTML page that
+  uses `postMessage` to communicate the session back to the opener window,
+  instead of redirecting. This allows PWAs running in standalone mode to
+  complete OAuth without losing their context.
+
+  - `pwa=true` query parameter on `/login` - Enables PWA flow
+  - `pwa` field in `OAuthState` - Tracks PWA flow through OAuth
+  - HTML callback page with `postMessage` for session transfer
+  - Automatic popup close after successful auth
+
+### Example
+
+```typescript
+// PWA detects standalone mode and opens OAuth in popup
+const popup = window.open("/login?handle=user.bsky&pwa=true", "oauth-popup");
+
+// Listen for postMessage from popup
+window.addEventListener("message", (event) => {
+  if (event.data.type === "oauth-callback" && event.data.success) {
+    // Session cookie is set, reload to pick it up
+    location.reload();
+  }
+});
+```
+
+### Security
+
+- PWA callbacks still set the session cookie for API authentication
+- The `postMessage` only sends `did` and `handle` (no tokens)
+- Fallback redirect to home page if `window.opener` is unavailable
+
 ## [2.4.0] - 2025-12-14
 
 ### Added

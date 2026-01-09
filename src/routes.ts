@@ -63,12 +63,14 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * - handle: User's AT Protocol handle (required)
    * - redirect: Relative path to redirect after OAuth (optional)
    * - mobile: Set to "true" for mobile OAuth flow (redirects to mobileScheme)
+   * - pwa: Set to "true" for PWA OAuth flow (returns HTML with postMessage)
    */
   async function handleLogin(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const handle = url.searchParams.get("handle");
     const redirect = url.searchParams.get("redirect");
     const mobile = url.searchParams.get("mobile") === "true";
+    const pwa = url.searchParams.get("pwa") === "true";
 
     if (!handle || typeof handle !== "string") {
       return new Response("Invalid handle", { status: 400 });
@@ -99,6 +101,11 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         state.mobile = true;
       }
 
+      // Track PWA flow for postMessage callback
+      if (pwa) {
+        state.pwa = true;
+      }
+
       const authUrl = await oauthClient.authorize(handle, {
         state: JSON.stringify(state),
         scope,
@@ -123,6 +130,10 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * For mobile OAuth (state.mobile=true):
    * - Redirects to mobileScheme with session_token, did, and handle
    * - Also sets cookie for fallback API auth
+   *
+   * For PWA OAuth (state.pwa=true):
+   * - Returns HTML page that sends session via postMessage to opener
+   * - Also sets cookie for API auth
    *
    * For web OAuth:
    * - Redirects to state.redirectPath or "/" with session cookie
@@ -181,6 +192,84 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
           status: 302,
           headers: {
             Location: mobileCallbackUrl.toString(),
+            "Set-Cookie": setCookieHeader,
+          },
+        });
+      }
+
+      // PWA OAuth: return HTML page with postMessage
+      if (state.pwa) {
+        logger.info(`PWA OAuth complete for ${state.handle}`);
+
+        const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login Complete</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .message {
+      text-align: center;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #FF6B6B;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="message">
+    <div class="spinner"></div>
+    <p>Completing login...</p>
+  </div>
+  <script>
+    (function() {
+      var data = {
+        type: 'oauth-callback',
+        success: true,
+        did: ${JSON.stringify(did)},
+        handle: ${JSON.stringify(state.handle)}
+      };
+
+      // Send to opener (PWA window) if available
+      if (window.opener) {
+        window.opener.postMessage(data, '*');
+        // Close this popup after a short delay
+        setTimeout(function() { window.close(); }, 500);
+      } else {
+        // Fallback: redirect to home (cookie is set)
+        window.location.href = '/';
+      }
+    })();
+  </script>
+</body>
+</html>`;
+
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
             "Set-Cookie": setCookieHeader,
           },
         });

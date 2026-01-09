@@ -313,6 +313,8 @@ export interface OAuthState {
   redirectPath?: string;
   /** Flag for mobile OAuth flow - redirects to mobileScheme instead of web */
   mobile?: boolean;
+  /** Flag for PWA OAuth flow - returns HTML page with postMessage instead of redirect */
+  pwa?: boolean;
 }
 
 // Re-export OAuthStorage from atproto-storage for convenience
