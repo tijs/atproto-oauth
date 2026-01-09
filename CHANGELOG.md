@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.1] - 2025-01-09
+
+### Fixed
+
+- **PWA OAuth localStorage fallback**: Added localStorage-based communication as
+  a fallback for PWA OAuth flows. When navigating through external OAuth
+  providers (like bsky.social), the `window.opener` reference is lost, causing
+  `postMessage` to fail. The callback now stores the result in localStorage,
+  which the opener can read via the `storage` event or by checking localStorage
+  when the popup closes.
+
 ## [2.5.0] - 2025-01-09
 
 ### Added
@@ -23,20 +34,25 @@ All notable changes to this project will be documented in this file.
 // PWA detects standalone mode and opens OAuth in popup
 const popup = window.open("/login?handle=user.bsky&pwa=true", "oauth-popup");
 
-// Listen for postMessage from popup
-window.addEventListener("message", (event) => {
-  if (event.data.type === "oauth-callback" && event.data.success) {
+// Listen for both postMessage and localStorage
+window.addEventListener("message", handleOAuthResult);
+window.addEventListener("storage", (e) => {
+  if (e.key === "pwa-oauth-result") handleOAuthResult(JSON.parse(e.newValue));
+});
+
+function handleOAuthResult(data) {
+  if (data.type === "oauth-callback" && data.success) {
     // Session cookie is set, reload to pick it up
     location.reload();
   }
-});
+}
 ```
 
 ### Security
 
 - PWA callbacks still set the session cookie for API authentication
 - The `postMessage` only sends `did` and `handle` (no tokens)
-- Fallback redirect to home page if `window.opener` is unavailable
+- localStorage data is cleared after successful read
 
 ## [2.4.0] - 2025-12-14
 

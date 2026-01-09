@@ -197,7 +197,9 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
         });
       }
 
-      // PWA OAuth: return HTML page with postMessage
+      // PWA OAuth: return HTML page that signals completion via localStorage
+      // We use localStorage instead of postMessage because window.opener
+      // is lost after navigating through external OAuth providers
       if (state.pwa) {
         logger.info(`PWA OAuth complete for ${state.handle}`);
 
@@ -224,43 +226,56 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid #e0e0e0;
-      border-top-color: #FF6B6B;
+    .success-icon {
+      width: 48px;
+      height: 48px;
+      background: #10b981;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto 1rem;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .success-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
     }
   </style>
 </head>
 <body>
   <div class="message">
-    <div class="spinner"></div>
-    <p>Completing login...</p>
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    </div>
+    <p>Login successful!</p>
+    <p style="color: #666; font-size: 14px;">You can close this window.</p>
   </div>
   <script>
     (function() {
+      // Store success data in localStorage for the opener to read
       var data = {
         type: 'oauth-callback',
         success: true,
         did: ${JSON.stringify(did)},
-        handle: ${JSON.stringify(state.handle)}
+        handle: ${JSON.stringify(state.handle)},
+        timestamp: Date.now()
       };
+      localStorage.setItem('pwa-oauth-result', JSON.stringify(data));
 
-      // Send to opener (PWA window) if available
-      if (window.opener) {
-        window.opener.postMessage(data, '*');
-        // Close this popup after a short delay
-        setTimeout(function() { window.close(); }, 500);
-      } else {
-        // Fallback: redirect to home (cookie is set)
-        window.location.href = '/';
+      // Try postMessage first (works if opener is still available)
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.postMessage(data, '*');
+        } catch (e) {
+          // Ignore cross-origin errors
+        }
       }
+
+      // Close popup after a short delay
+      setTimeout(function() {
+        window.close();
+      }, 1500);
     })();
   </script>
 </body>
