@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.0] - 2026-02-15
+
+### Changed
+
+- **Update oauth-client-deno to 5.0.0**: Picks up issuer verification after
+  token exchange, token response validation, auth server metadata validation,
+  DPoP htu normalization, nonce caching, auto-retry on 401, and HTTPS
+  enforcement. See oauth-client-deno v5.0.0 changelog for full details.
+
 ## [2.6.1] - 2026-02-15
 
 ### Fixed
