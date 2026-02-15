@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] - 2026-02-15
+
+### Fixed
+
+- **Update oauth-client-deno to 4.1.0**: The underlying OAuth client now also
+  accepts authorization server URLs, completing the full flow.
+
 ## [2.6.0] - 2026-02-15
 
 ### Added
