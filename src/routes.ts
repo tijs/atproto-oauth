@@ -63,6 +63,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * Query parameters:
    * - handle: User's AT Protocol handle or authorization server URL (required)
    * - redirect: Relative path to redirect after OAuth (optional)
+   * - prompt: OAuth prompt value, e.g. "create" for account registration (optional)
    * - mobile: Set to "true" for mobile OAuth flow (redirects to mobileScheme)
    * - pwa: Set to "true" for PWA OAuth flow (returns HTML with postMessage)
    */
@@ -72,6 +73,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
     const redirect = url.searchParams.get("redirect");
     const mobile = url.searchParams.get("mobile") === "true";
     const pwa = url.searchParams.get("pwa") === "true";
+    const prompt = url.searchParams.get("prompt");
 
     if (!handle || typeof handle !== "string") {
       return new Response("Invalid handle", { status: 400 });
@@ -112,6 +114,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       const authUrl = await oauthClient.authorize(handle, {
         state: JSON.stringify(state),
         scope,
+        ...(prompt ? { prompt } : {}),
       });
 
       return new Response(null, {

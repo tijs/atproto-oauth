@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.0] - 2026-02-15
+
+### Added
+
+- **OAuth-based account registration**: The `/login` handler now accepts a
+  `prompt` query parameter. Use `prompt=create` with a PDS URL as the handle to
+  direct users to the PDS account registration page. After registration, the
+  OAuth callback completes normally and the user is authenticated.
+
+  ```
+  /login?handle=https://bsky.social&prompt=create
+  ```
+
 ## [2.7.2] - 2026-02-15
 
 ### Fixed

@@ -82,7 +82,7 @@ export interface OAuthClientInterface {
    */
   authorize(
     handle: string,
-    options?: { state?: string; scope?: string },
+    options?: { state?: string; scope?: string; prompt?: string },
   ): Promise<URL>;
 
   /**
