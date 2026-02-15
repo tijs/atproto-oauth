@@ -60,7 +60,7 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
    * Handle /login route - start OAuth flow
    *
    * Query parameters:
-   * - handle: User's AT Protocol handle (required)
+   * - handle: User's AT Protocol handle or authorization server URL (required)
    * - redirect: Relative path to redirect after OAuth (optional)
    * - mobile: Set to "true" for mobile OAuth flow (redirects to mobileScheme)
    * - pwa: Set to "true" for PWA OAuth flow (returns HTML with postMessage)
@@ -76,7 +76,9 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       return new Response("Invalid handle", { status: 400 });
     }
 
-    if (!isValidHandle(handle)) {
+    // Accept AT Protocol handles and authorization server URLs (https://)
+    const isUrl = handle.startsWith("https://");
+    if (!isUrl && !isValidHandle(handle)) {
       return new Response("Invalid handle format", { status: 400 });
     }
 

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] - 2026-02-15
+
+### Added
+
+- **Authorization server URL support**: The `/login` handler now accepts
+  authorization server URLs (e.g., `https://bsky.social`) in addition to AT
+  Protocol handles. This enables "Connect with Bluesky" flows that skip handle
+  entry and redirect directly to a specific auth server.
+
 ## [2.5.1] - 2025-01-09
 
 ### Fixed
