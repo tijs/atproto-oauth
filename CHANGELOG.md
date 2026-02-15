@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.1] - 2026-02-15
+
+### Fixed
+
+- **Graceful issuer mismatch handling**: When "Connect with Bluesky" is used by
+  someone whose PDS has a different auth server (e.g., self-hosted PDS), the
+  callback now redirects to `/?auth_error=issuer_mismatch` instead of showing a
+  raw error. Apps can check this query parameter to display a user-friendly
+  message suggesting handle-based login.
+
 ## [2.7.0] - 2026-02-15
 
 ### Changed
