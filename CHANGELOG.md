@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.2] - 2026-02-15
+
+### Fixed
+
+- **Transparent re-auth on issuer mismatch**: When "Connect with Bluesky" is
+  used by someone whose PDS has a different auth server (e.g., self-hosted PDS),
+  the callback now automatically re-authorizes through the correct auth server
+  using the user's resolved handle. The user is transparently redirected to
+  their PDS's auth server instead of seeing an error.
+
 ## [2.7.1] - 2026-02-15
 
 ### Fixed

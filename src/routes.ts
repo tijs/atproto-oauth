@@ -305,16 +305,21 @@ export function createRouteHandlers(config: RouteHandlersConfig): {
       });
     } catch (error) {
       // Issuer mismatch: the auth server used (e.g. bsky.social) is not
-      // authoritative for this user's PDS. Redirect back to login with
-      // a hint to enter their handle instead of using quick-connect.
-      if (error instanceof IssuerMismatchError) {
-        logger.warn(
-          "Issuer mismatch — user's PDS uses a different auth server",
-          { expected: error.expected, actual: error.actual },
+      // authoritative for this user's PDS. If we discovered the user's
+      // handle, re-authorize through their correct auth server transparently.
+      if (error instanceof IssuerMismatchError && error.handle) {
+        logger.info(
+          "Issuer mismatch — re-authorizing through correct auth server",
+          {
+            expected: error.expected,
+            actual: error.actual,
+            handle: error.handle,
+          },
         );
+        const loginUrl = `/login?handle=${encodeURIComponent(error.handle)}`;
         return new Response(null, {
           status: 302,
-          headers: { Location: "/?auth_error=issuer_mismatch" },
+          headers: { Location: loginUrl },
         });
       }
 
