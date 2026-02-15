@@ -177,6 +177,24 @@ Deno.test("createATProtoOAuth - getSessionFromRequest returns error on no cookie
   assertEquals(result.error?.type, "NO_COOKIE");
 });
 
+Deno.test("createATProtoOAuth - localhost uses loopback client metadata", () => {
+  const oauth = createATProtoOAuth({
+    baseUrl: "http://localhost:8000",
+    appName: "Dev App",
+    cookieSecret: "a".repeat(32),
+    storage: new MemoryStorage(),
+  });
+
+  const metadata = oauth.getClientMetadata();
+
+  // client_id should be loopback format
+  assertEquals(metadata.client_id.startsWith("http://localhost?"), true);
+  // redirect_uris should use 127.0.0.1
+  assertEquals(metadata.redirect_uris, [
+    "http://127.0.0.1:8000/oauth/callback",
+  ]);
+});
+
 Deno.test("createATProtoOAuth - handleLogout clears session", async () => {
   const oauth = createATProtoOAuth({
     baseUrl: "https://myapp.example.com",

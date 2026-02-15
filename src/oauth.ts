@@ -12,7 +12,12 @@ import type {
   Logger,
 } from "./types.ts";
 import { noopLogger } from "./types.ts";
-import { generateClientMetadata } from "./client-metadata.ts";
+import {
+  buildLoopbackClientId,
+  buildLoopbackRedirectUri,
+  generateClientMetadata,
+  isLoopbackUrl,
+} from "./client-metadata.ts";
 import { OAuthSessions } from "./sessions.ts";
 import { createRouteHandlers } from "./routes.ts";
 
@@ -106,11 +111,24 @@ export function createATProtoOAuth(
   const baseUrl = config.baseUrl.replace(/\/$/, "");
   const sessionTtl = config.sessionTtl ?? DEFAULT_SESSION_TTL;
   const logger: Logger = config.logger ?? noopLogger;
+  const scope = config.scope || "atproto transition:generic";
+  const loopback = isLoopbackUrl(baseUrl);
+
+  // For loopback URLs, use AT Protocol OAuth localhost convention:
+  // - client_id: http://localhost?redirect_uri=...&scope=...
+  // - redirect_uri: http://127.0.0.1:<port>/oauth/callback
+  const redirectUri = loopback
+    ? buildLoopbackRedirectUri(baseUrl)
+    : `${baseUrl}/oauth/callback`;
+
+  const clientId = loopback
+    ? buildLoopbackClientId(redirectUri, scope)
+    : `${baseUrl}/oauth-client-metadata.json`;
 
   // Create OAuth client (Logger interfaces now match)
   const oauthClient = new OAuthClient({
-    clientId: `${baseUrl}/oauth-client-metadata.json`,
-    redirectUri: `${baseUrl}/oauth/callback`,
+    clientId,
+    redirectUri,
     storage: config.storage,
     logger,
   });

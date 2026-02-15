@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9.0] - 2026-02-15
+
+### Added
+
+- **Localhost/loopback development support**: When `baseUrl` is a localhost or
+  loopback address (e.g., `http://localhost:8000`), the library now generates
+  the correct AT Protocol OAuth loopback client metadata:
+  - `client_id` uses the `http://localhost?redirect_uri=...&scope=...` format
+  - `redirect_uris` use `http://127.0.0.1:<port>` instead of `localhost`
+
+  This follows the AT Protocol OAuth spec for loopback clients, allowing local
+  development without ngrok or other tunneling tools.
+
 ## [2.8.0] - 2026-02-15
 
 ### Added
