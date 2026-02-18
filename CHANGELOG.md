@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.0] - 2026-02-18
+
+### Changed
+
+- **`getOAuthSession` handles unrecoverable errors gracefully**: Instead of
+  re-throwing all errors from the underlying OAuth client's `restore()` method,
+  `getOAuthSession` now returns `null` for unrecoverable session errors (expired
+  tokens, revoked tokens, corrupt data, deserialization failures) and cleans up
+  the dead session from storage. Only transient `NetworkError` is re-thrown so
+  callers can decide whether to retry. This eliminates the need for consumers to
+  string-match on error messages to distinguish expected session failures from
+  bugs.
+
 ## [2.9.0] - 2026-02-15
 
 ### Added

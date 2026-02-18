@@ -4,6 +4,7 @@
  */
 
 import type { OAuthStorage } from "@tijs/atproto-storage";
+import { NetworkError } from "@tijs/oauth-client-deno";
 import type {
   Logger,
   OAuthClientInterface,
@@ -81,12 +82,33 @@ export class OAuthSessions implements OAuthSessionsInterface {
 
       return session;
     } catch (error) {
-      this.logger.error(`Failed to restore OAuth session for DID ${did}:`, {
+      // NetworkError is transient — re-throw so callers can retry or handle
+      if (error instanceof NetworkError) {
+        this.logger.warn(`Network error restoring session for DID ${did}:`, {
+          error: error.message,
+        });
+        throw error;
+      }
+
+      // All other errors mean the session is unrecoverable (expired tokens,
+      // revoked tokens, corrupt data, deserialization failures). Return null
+      // per the method contract and clean up the dead session from storage.
+      this.logger.warn(`Session unrecoverable for DID ${did}, removing:`, {
         error: error instanceof Error ? error.message : String(error),
         errorName: error instanceof Error ? error.constructor.name : "Unknown",
-        stack: error instanceof Error ? error.stack : undefined,
       });
-      throw error; // Re-throw to let caller handle specific error types
+
+      try {
+        await this.storage.delete(`session:${did}`);
+      } catch (cleanupError) {
+        this.logger.error(`Failed to clean up session for DID ${did}:`, {
+          error: cleanupError instanceof Error
+            ? cleanupError.message
+            : String(cleanupError),
+        });
+      }
+
+      return null;
     }
   }
 
