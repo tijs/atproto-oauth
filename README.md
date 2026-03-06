@@ -47,7 +47,7 @@ clients receive encrypted session cookies.
 
 ```typescript
 import { createATProtoOAuth } from "jsr:@tijs/atproto-oauth";
-import { SQLiteStorage, valTownAdapter } from "jsr:@tijs/atproto-storage";
+import { SQLiteStorage, sqliteAdapter } from "jsr:@tijs/atproto-storage";
 ```
 
 ## Usage
@@ -56,14 +56,14 @@ import { SQLiteStorage, valTownAdapter } from "jsr:@tijs/atproto-storage";
 
 ```typescript
 import { createATProtoOAuth } from "jsr:@tijs/atproto-oauth";
-import { SQLiteStorage, valTownAdapter } from "jsr:@tijs/atproto-storage";
+import { SQLiteStorage, sqliteAdapter } from "jsr:@tijs/atproto-storage";
 import { sqlite } from "https://esm.town/v/std/sqlite";
 
 const oauth = createATProtoOAuth({
   baseUrl: "https://myapp.example.com",
   appName: "My App",
   cookieSecret: Deno.env.get("COOKIE_SECRET")!,
-  storage: new SQLiteStorage(valTownAdapter(sqlite)),
+  storage: new SQLiteStorage(sqliteAdapter(sqlite)),
   sessionTtl: 60 * 60 * 24 * 14, // 14 days
 });
 ```

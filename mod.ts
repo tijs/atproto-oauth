@@ -9,13 +9,13 @@
  * @example
  * ```typescript
  * import { createATProtoOAuth } from "@tijs/atproto-oauth";
- * import { SQLiteStorage, valTownAdapter } from "@tijs/atproto-storage";
+ * import { SQLiteStorage, sqliteAdapter } from "@tijs/atproto-storage";
  *
  * const oauth = createATProtoOAuth({
  *   baseUrl: "https://myapp.example.com",
  *   appName: "My App",
  *   cookieSecret: Deno.env.get("COOKIE_SECRET")!,
- *   storage: new SQLiteStorage(valTownAdapter(sqlite)),
+ *   storage: new SQLiteStorage(sqliteAdapter(sqlite)),
  * });
  *
  * // Mount routes in your framework

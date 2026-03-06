@@ -34,7 +34,7 @@ const oauth = createATProtoOAuth({
   baseUrl: "https://myapp.example.com",
   appName: "My App",
   cookieSecret: Deno.env.get("COOKIE_SECRET")!,
-  storage: new SQLiteStorage(valTownAdapter(sqlite)),
+  storage: new SQLiteStorage(sqliteAdapter(sqlite)),
   sessionTtl: 60 * 60 * 24 * 14,
   mobileScheme: "myapp://auth-callback", // Your app's URL scheme
 });

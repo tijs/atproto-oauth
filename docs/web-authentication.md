@@ -20,7 +20,7 @@ Web authentication uses a standard OAuth 2.0 flow with PKCE:
 
 ```typescript
 import { createATProtoOAuth } from "jsr:@tijs/atproto-oauth";
-import { SQLiteStorage, valTownAdapter } from "jsr:@tijs/atproto-storage";
+import { SQLiteStorage, sqliteAdapter } from "jsr:@tijs/atproto-storage";
 ```
 
 ### Configuration
@@ -30,7 +30,7 @@ const oauth = createATProtoOAuth({
   baseUrl: "https://myapp.example.com",
   appName: "My App",
   cookieSecret: Deno.env.get("COOKIE_SECRET")!, // At least 32 characters
-  storage: new SQLiteStorage(valTownAdapter(sqlite)),
+  storage: new SQLiteStorage(sqliteAdapter(sqlite)),
   sessionTtl: 60 * 60 * 24 * 14, // 14 days (max for public clients)
   logoUri: "https://myapp.example.com/logo.png", // Optional
   policyUri: "https://myapp.example.com/privacy", // Optional

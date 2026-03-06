@@ -36,13 +36,13 @@ const DEFAULT_SESSION_TTL = 60 * 60 * 24 * 7;
  * @example Basic setup
  * ```typescript
  * import { createATProtoOAuth } from "@tijs/atproto-oauth";
- * import { SQLiteStorage, valTownAdapter } from "@tijs/atproto-storage";
+ * import { SQLiteStorage, sqliteAdapter } from "@tijs/atproto-storage";
  *
  * const oauth = createATProtoOAuth({
  *   baseUrl: "https://myapp.example.com",
  *   appName: "My App",
  *   cookieSecret: Deno.env.get("COOKIE_SECRET")!,
- *   storage: new SQLiteStorage(valTownAdapter(sqlite)),
+ *   storage: new SQLiteStorage(sqliteAdapter(sqlite)),
  *   sessionTtl: 60 * 60 * 24 * 14, // 14 days
  * });
  *
