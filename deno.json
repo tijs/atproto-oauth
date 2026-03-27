@@ -26,6 +26,9 @@
     "@tijs/atproto-storage": "jsr:@tijs/atproto-storage@1.1.0",
     "@atproto/syntax": "npm:@atproto/syntax@0.3.0"
   },
+  "lint": {
+    "exclude": ["_build_npm.ts"]
+  },
   "compilerOptions": {
     "strict": true,
     "noImplicitAny": true
