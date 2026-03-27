@@ -1,4 +1,4 @@
-name: Publish to JSR
+name: Publish
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
       - "v*"
 
 jobs:
-  publish:
+  publish-jsr:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       id-token: write
@@ -30,3 +29,34 @@ jobs:
 
       - name: Publish to JSR
         run: deno publish
+
+  publish-npm:
+    runs-on: ubuntu-latest
+    needs: publish-jsr
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
+      - name: Build npm package
+        run: deno task build:npm
+
+      - name: Publish to npm
+        run: cd npm && npm publish --provenance --access public

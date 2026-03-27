@@ -13,7 +13,10 @@
       "LICENSE"
     ],
     "exclude": [
-      "**/*.test.ts"
+      "**/*.test.ts",
+      "npm/",
+      "_build_npm.ts",
+      "_build_import_map.json"
     ]
   },
   "imports": {
@@ -33,6 +36,7 @@
     "fmt": "deno fmt",
     "lint": "deno lint",
     "quality": "deno fmt && deno lint && deno check mod.ts",
-    "ci": "deno task quality && deno task test"
+    "ci": "deno task quality && deno task test",
+    "build:npm": "deno run -A _build_npm.ts"
   }
 }
