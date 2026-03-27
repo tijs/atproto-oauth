@@ -232,15 +232,12 @@ interface SessionInterface {
 
 ## Related Packages
 
-- [@tijs/atproto-storage](https://jsr.io/@tijs/atproto-storage)
-  ([npm](https://www.npmjs.com/package/@tijs/atproto-storage)) - Storage
+- [@tijs/atproto-storage](https://github.com/tijs/atproto-storage) - Storage
   implementations
-- [@tijs/atproto-sessions](https://jsr.io/@tijs/atproto-sessions)
-  ([npm](https://www.npmjs.com/package/@tijs/atproto-sessions)) - Session cookie
-  management
-- [@tijs/oauth-client-deno](https://jsr.io/@tijs/oauth-client-deno)
-  ([npm](https://www.npmjs.com/package/@tijs/oauth-client-deno)) - AT Protocol
-  OAuth client
+- [@tijs/atproto-sessions](https://github.com/tijs/atproto-sessions) - Session
+  cookie management
+- [@tijs/oauth-client-deno](https://github.com/tijs/oauth-client-deno) - AT
+  Protocol OAuth client
 
 ## License
 
