@@ -20,7 +20,7 @@ Web authentication uses a standard OAuth 2.0 flow with PKCE:
 
 ```typescript
 import { createATProtoOAuth } from "jsr:@tijs/atproto-oauth";
-import { SQLiteStorage, sqliteAdapter } from "jsr:@tijs/atproto-storage";
+import { sqliteAdapter, SQLiteStorage } from "jsr:@tijs/atproto-storage";
 ```
 
 ### Configuration
