@@ -2,6 +2,7 @@
 
 [![Test](https://github.com/tijs/atproto-oauth/actions/workflows/test.yml/badge.svg)](https://github.com/tijs/atproto-oauth/actions/workflows/test.yml)
 [![JSR](https://jsr.io/badges/@tijs/atproto-oauth)](https://jsr.io/@tijs/atproto-oauth)
+[![npm](https://img.shields.io/npm/v/@tijs/atproto-oauth)](https://www.npmjs.com/package/@tijs/atproto-oauth)
 
 Framework-agnostic OAuth integration for AT Protocol (Bluesky) applications.
 Works with standard Web Request/Response APIs - no framework dependencies.
@@ -45,9 +46,12 @@ clients receive encrypted session cookies.
 
 ## Installation
 
-```typescript
-import { createATProtoOAuth } from "jsr:@tijs/atproto-oauth";
-import { SQLiteStorage, sqliteAdapter } from "jsr:@tijs/atproto-storage";
+```bash
+# npm
+npm install @tijs/atproto-oauth @tijs/atproto-storage
+
+# Deno
+deno add jsr:@tijs/atproto-oauth jsr:@tijs/atproto-storage
 ```
 
 ## Usage
@@ -228,11 +232,11 @@ interface SessionInterface {
 
 ## Related Packages
 
-- [@tijs/atproto-storage](https://jsr.io/@tijs/atproto-storage) - Storage
+- [@tijs/atproto-storage](https://jsr.io/@tijs/atproto-storage) ([npm](https://www.npmjs.com/package/@tijs/atproto-storage)) - Storage
   implementations
-- [@tijs/atproto-sessions](https://jsr.io/@tijs/atproto-sessions) - Session
+- [@tijs/atproto-sessions](https://jsr.io/@tijs/atproto-sessions) ([npm](https://www.npmjs.com/package/@tijs/atproto-sessions)) - Session
   cookie management
-- [@tijs/oauth-client-deno](https://jsr.io/@tijs/oauth-client-deno) - AT
+- [@tijs/oauth-client-deno](https://jsr.io/@tijs/oauth-client-deno) ([npm](https://www.npmjs.com/package/@tijs/oauth-client-deno)) - AT
   Protocol OAuth client
 
 ## License
