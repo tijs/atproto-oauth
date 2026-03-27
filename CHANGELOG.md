@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.1] - 2026-03-27
+
+### Fixed
+
+- **Fix npm dependency versions**: Corrected `@tijs/atproto-storage` dependency
+  version in npm build so `npm install @tijs/atproto-oauth` resolves correctly.
+
 ## [2.10.0] - 2026-02-18
 
 ### Changed
