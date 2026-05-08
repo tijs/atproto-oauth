@@ -51,11 +51,10 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
+          token: ""
 
       - name: Build npm package
         run: deno task build:npm
 
       - name: Publish to npm
         run: cd npm && npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
