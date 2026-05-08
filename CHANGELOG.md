@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.3] - 2026-05-08
+
+### Changed
+
+- **CI**: Split publish into `jsr-publish.yml` and `npm-publish.yml` with npm
+  trusted publishing (OIDC, no static token).
+
 ## [2.10.2] - 2026-05-08
 
 ### Changed
