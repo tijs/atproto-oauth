@@ -56,4 +56,6 @@ jobs:
         run: deno task build:npm
 
       - name: Publish to npm
-        run: cd npm && npm publish --provenance --access public
+        run: |
+          npm config delete "//registry.npmjs.org/:_authToken" || true
+          cd npm && npm publish --provenance --access public
