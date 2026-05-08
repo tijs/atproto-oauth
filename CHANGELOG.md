@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.2] - 2026-05-08
+
+### Changed
+
+- Bump `@tijs/atproto-storage` to 1.2.0 — self-healing schema migration in
+  `SQLiteStorage.init()` automatically upgrades pre-1.1.0 tables that are
+  missing `created_at` and `updated_at` columns.
+
 ## [2.10.1] - 2026-03-27
 
 ### Fixed
